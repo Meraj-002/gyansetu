@@ -1,0 +1,26 @@
+Flashcard images
+================
+
+Every image bundled here was checked at download time to be in the public
+domain or released under CC0, from Wikimedia Commons. Neither licence requires
+attribution; this file is kept as a record.
+
+They are downloaded once and shipped with the app. Nothing is fetched at
+runtime, which is what lets the flashcards work with no connection.
+
+  animals/cow.jpg      Cow female black white            public domain
+  animals/dog.jpg      Wikimedia Commons                 public domain
+  animals/goat.jpg     Goat of Margarita                 CC0
+  animals/hen.jpg      Wikimedia Commons                 public domain
+  nature/tree.png      Wikimedia Commons                 CC0
+  nature/leaf.jpg      Wikimedia Commons                 public domain
+  nature/river.png     Wikimedia Commons                 public domain
+  nature/sun.jpg       Wikimedia Commons                 CC0
+  objects/apple.jpg    Wikimedia Commons                 public domain
+  objects/chair.png    Windsor Chair (PSF)               public domain
+  objects/pencil.jpg   Pencils Standing On White Backgr. CC0
+  objects/cup.jpg      Cup of tea isolated on white bg.  CC0
+
+The Numbers cards carry no photograph. A numeral is not a thing that can be
+photographed, so those cards draw the digit with that many counters, using the
+same shapes the printable worksheet uses.

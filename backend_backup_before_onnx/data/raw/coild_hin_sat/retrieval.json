@@ -1,0 +1,14 @@
+{
+  "dataset": "ainlpml-iitp/COILD-MT-Corpus",
+  "revision": "main",
+  "url_template": "https://huggingface.co/datasets/ainlpml-iitp/COILD-MT-Corpus/resolve/main/{path}",
+  "license": "CC BY 4.0",
+  "retrieved_on": "2026-08-30",
+  "statuses": {
+    "HIN-SAT/Hindi.txt": 401
+  },
+  "files": {
+    "Hindi.txt": false,
+    "Santali.txt": false
+  }
+}

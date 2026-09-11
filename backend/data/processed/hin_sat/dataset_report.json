@@ -1,0 +1,17 @@
+{
+  "dataset": "COILD-MT-Corpus HIN-SAT",
+  "raw_files": [
+    "Hindi.txt",
+    "Santali.txt"
+  ],
+  "acquired": false,
+  "blocked_note": "The COILD HIN-SAT files are gated and not yet acquired. Run scripts/acquire_coild_hin_sat.py with an accepted-terms token first; missing: ['Hindi.txt', 'Santali.txt']. No pairs were fabricated.",
+  "raw_pair_count": 0,
+  "valid_pair_count": 0,
+  "removed_pair_count": 0,
+  "splits": {
+    "train": 0,
+    "valid": 0,
+    "test": 0
+  }
+}

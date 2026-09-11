@@ -1,0 +1,5 @@
+# Data models live here.
+#
+# Left empty on purpose: models are added alongside the feature that defines
+# them, so that the schema follows the real API and SQLite tables rather than
+# being guessed up front.

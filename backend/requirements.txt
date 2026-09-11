@@ -1,0 +1,26 @@
+# GyanSetu backend — web framework
+fastapi>=0.115
+uvicorn[standard]>=0.32
+
+# Database
+sqlalchemy>=2.0
+psycopg[binary]>=3.2        # PostgreSQL driver (production target)
+alembic>=1.14               # migrations
+
+# Validation / config
+pydantic>=2.9
+pydantic-settings>=2.6
+
+# Auth
+PyJWT>=2.9
+
+# Environment files (used by pydantic-settings)
+python-dotenv>=1.0
+
+# Testing
+pytest>=8.3
+pytest-asyncio>=0.24
+httpx>=0.27
+
+# Multipart uploads (POST /api/v1/translation/speech accepts an audio file)
+python-multipart>=0.0.9

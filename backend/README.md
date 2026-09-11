@@ -1,0 +1,97 @@
+# GyanSetu Backend
+
+A FastAPI + SQLAlchemy + PostgreSQL backend for the offline-first GyanSetu app.
+It implements the API and sync contracts used by the Flutter client, including
+the optional real IndicTrans2 translation provider.
+
+The Flutter client has a shared HTTP layer and keeps its offline-first behavior
+when the backend is unavailable.
+
+## Quick start
+
+```sh
+python3 -m venv .venv
+./.venv/bin/pip install -r requirements.txt
+cp .env.example .env        # adjust GYANSETU_DATABASE_URL / SECRET_KEY
+./.venv/bin/uvicorn app.main:app --reload
+```
+
+Interactive API docs: http://127.0.0.1:8000/docs — health: http://127.0.0.1:8000/health
+
+Default config uses a local SQLite file (zero setup). For PostgreSQL set
+`GYANSETU_DATABASE_URL=postgresql+psycopg://user:pass@host/db`.
+
+## Database migrations
+
+```sh
+GYANSETU_DATABASE_URL=sqlite:///./gyansetu_dev.db ./.venv/bin/alembic upgrade head
+```
+
+`alembic/env.py` reads the same `GYANSETU_DATABASE_URL` variable used at runtime.
+Run `alembic revision --autogenerate` after model changes.
+
+## Tests
+
+```sh
+./.venv/bin/python -m pytest tests/ -q
+```
+
+Every test uses a throwaway SQLite database — nothing touches a developer or
+production database.
+
+## API surface (all under `/api/v1`)
+
+| Area | Endpoints |
+| --- | --- |
+| Auth | `auth/register`, `auth/login`, `auth/verify-school-code`, `auth/recover`, `auth/me`, `auth/logout` |
+| Teachers | `teachers` CRUD + `teachers/me` |
+| Schools | `schools` CRUD + `schools/by-code/{code}` |
+| Catalogue | `lessons`, `learning-outcomes`, `translations` |
+| Records | `worksheets`, `assessments`, `sessions`, `progress` (teacher-owned) |
+| Sync | `sync/push`, `sync/pull`, `sync/status` |
+| Health | `/health`, `/health/db` |
+
+Response bodies use **camelCase** keys to match the Flutter models; enum-like
+fields travel as strings (e.g. `"subject": "foundationalLiteracy"`).
+
+## Sync contract
+
+Offline-first flow: the app writes locally, then pushes and pulls in batches.
+
+* **push** — `{deviceId, documents: [{type, id, data}]}`. Documents are
+  upserted idempotently by client id. Types: `classroomSetup`,
+  `classroomSession`, `assessmentResult`, `worksheet`, `progressEvent`,
+  `supportReport`. Response reports per-document `acknowledged`, `conflicts`
+  (e.g. an event whose `teacherId` belongs to someone else) and `errors`.
+* **pull** — `{since, includeCatalog}` returns every teacher-owned document
+  changed after `since`, plus the global catalogue (`lesson`,
+  `learningOutcome`) when requested. `since` is the cursor from the last pull,
+  so `updatedAt` drives recovery.
+* **status** — `{serverTime, counts}` per document type.
+
+## Auth
+
+* Password hashing: PBKDF2-HMAC-SHA256 (stdlib), stored as
+  `pbkdf2_sha256$<iters>$<salt>$<hash>`.
+* Login tokens: signed JWTs (HS256), 7-day expiry, subject = teacher id.
+* Teachers authenticate by mobile or teacher id; an optional `schoolCode` on
+  login additionally pins the school.
+
+## Deployment notes
+
+* Set `GYANSETU_ENV=production` — the dev SQLite auto-create workaround and
+  default secret are dev-only.
+* Generate a real `GYANSETU_SECRET_KEY` and restrict
+  `GYANSETU_CORS_ORIGINS` to the app's own origin.
+
+## Known limitations (deliberate)
+
+* **Development is the default provider.** Set
+  `GYANSETU_TRANSLATION_PROVIDER=indic_trans2` to enable the real ONNX-backed
+  IndicTrans2 provider. If its model/runtime is unavailable, the API returns an
+  explicit `model_unavailable` response rather than a fallback translation.
+* **PIN recovery is acknowledge-only.** `auth/recover` returns `accepted` but
+  there is no SMS/email channel wired up.
+* **The COILD evaluation dataset remains gated.** Acquisition and BLEU/chrF
+  evaluation stay blocked until the project owner supplies accepted access.
+* **Offline mode is unchanged** — the app continues to work fully offline.
